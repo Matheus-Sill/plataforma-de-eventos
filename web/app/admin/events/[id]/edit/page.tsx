@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import EventForm, { EventFormValues } from "@/components/EventForm";
 import { apiFetch } from "@/lib/api-client";
 import { useRequireAdmin } from "@/lib/use-require-admin";
 
-export default function EditEventPage() {
+function EditEventContent() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const ready = useRequireAdmin();
-  const [initialValues, setInitialValues] = useState<EventFormValues | null>(null);
+
+  const [initialValues, setInitialValues] =
+    useState<EventFormValues | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,7 +25,7 @@ export default function EditEventPage() {
         setInitialValues({
           title: event.title,
           description: event.description,
-          date: event.date.slice(0, 10), // "2026-11-10T00:00:00.000Z" -> "2026-11-10"
+          date: event.date.slice(0, 10),
           time: event.time,
           location: event.location,
           image: event.image ?? "",
@@ -39,25 +42,45 @@ export default function EditEventPage() {
       method: "PUT",
       body: JSON.stringify(values),
     });
+
     router.push("/admin");
   }
 
   if (!ready) return null;
 
   return (
-    <main className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Editar evento</h1>
+    <main className="mx-auto max-w-2xl p-6 text-white">
+      <Link href="/admin" className="text-sm text-blue-400 hover:text-blue-300">
+        ← Voltar ao painel
+      </Link>
 
-      {loading && <p>Carregando...</p>}
-      {error && <p className="bg-red-100 text-red-700 p-2 rounded">{error}</p>}
+      <section className="mt-5 rounded-2xl border border-white/10 bg-gray-900 p-6">
+        <h1 className="mb-6 text-2xl font-bold">Editar evento</h1>
 
-      {initialValues && (
-        <EventForm
-          initialValues={initialValues}
-          submitLabel="Salvar alterações"
-          onSubmit={handleUpdate}
-        />
-      )}
+        {loading && <p className="text-gray-400">Carregando...</p>}
+
+        {error && (
+          <p className="mb-4 rounded bg-red-500/10 p-3 text-red-400">
+            {error}
+          </p>
+        )}
+
+        {initialValues && (
+          <EventForm
+            initialValues={initialValues}
+            submitLabel="Salvar alterações"
+            onSubmit={handleUpdate}
+          />
+        )}
+      </section>
     </main>
+  );
+}
+
+export default function EditEventPage() {
+  return (
+    <Suspense fallback={<p className="p-6 text-gray-400">Carregando...</p>}>
+      <EditEventContent />
+    </Suspense>
   );
 }

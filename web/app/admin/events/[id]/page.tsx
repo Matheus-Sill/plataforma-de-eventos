@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
@@ -16,7 +16,7 @@ type EventDetail = {
   image: string | null;
 };
 
-export default function EventDetailPage() {
+function EventDetailContent() {
   const { id } = useParams<{ id: string }>();
   const ready = useRequireAdmin();
   const [event, setEvent] = useState<EventDetail | null>(null);
@@ -37,43 +37,59 @@ export default function EventDetailPage() {
   if (!ready) return null;
 
   return (
-    <main className="max-w-xl mx-auto p-6">
-      <Link href="/admin" className="text-sm text-blue-600">
-        ← Voltar
+    <main className="mx-auto max-w-3xl p-6 text-white">
+      <Link href="/admin" className="text-sm text-blue-400 hover:text-blue-300">
+        ← Voltar ao painel
       </Link>
 
-      {loading && <p className="mt-4">Carregando...</p>}
+      {loading && <p className="mt-6 text-gray-400">Carregando evento...</p>}
+
       {error && (
-        <p className="mt-4 bg-red-100 text-red-700 p-2 rounded">{error}</p>
+        <p className="mt-4 rounded bg-red-500/10 p-3 text-red-400">
+          {error}
+        </p>
       )}
 
       {event && (
-        <article className="mt-4 space-y-3">
+        <article className="mt-6 space-y-5 rounded-2xl border border-white/10 bg-gray-900 p-6">
           {event.image && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={event.image}
               alt={event.title}
-              className="w-full rounded-lg"
+              className="max-h-96 w-full rounded-xl object-cover"
             />
           )}
-          <h1 className="text-2xl font-bold">{event.title}</h1>
-          <p className="text-gray-600">
+
+          <h1 className="text-3xl font-bold">{event.title}</h1>
+
+          <p className="text-gray-400">
             {new Date(event.date).toLocaleDateString("pt-BR", {
               timeZone: "UTC",
             })}{" "}
             às {event.time} · {event.location}
           </p>
-          <p className="whitespace-pre-line">{event.description}</p>
+
+          <p className="whitespace-pre-line leading-7 text-gray-300">
+            {event.description}
+          </p>
 
           <Link
             href={`/admin/events/${event.id}/edit`}
-            className="inline-block bg-green-700 text-white px-4 py-2 rounded"
+            className="inline-block rounded-lg bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-500"
           >
             Editar evento
           </Link>
         </article>
       )}
     </main>
+  );
+}
+
+export default function EventDetailPage() {
+  return (
+    <Suspense fallback={<p className="p-6 text-gray-400">Carregando...</p>}>
+      <EventDetailContent />
+    </Suspense>
   );
 }
