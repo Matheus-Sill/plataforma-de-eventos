@@ -3,7 +3,7 @@
 Sistema web de gerenciamento de eventos e API REST consumida pelo aplicativo mobile.
 Projeto da atividade avaliativa de **Desenvolvimento Mobile** — IFMA Campus Timon.
 
-**Integrantes:** _Nome 1_ e _Nome 2_
+**Integrantes:** Matheus Costa e Wiltiene Marrara
 
 ## Visão geral
 
@@ -39,7 +39,7 @@ docker run --name eventos-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=post
 ```
 
 O banco fica na porta **5433** do computador (a porta 5432 pode estar ocupada por outro PostgreSQL local).
-Depois da primeira vez, basta ligar e desligar o container `eventos-db` pelo terminal, ou com `docker start eventos-db` / `docker stop eventos-db`.
+Execute `docker run` somente na primeira vez. Nas próximas execuções, use `docker start eventos-db` para iniciar e `docker stop eventos-db` para parar. Para conferir o estado do container, use `docker ps -a`.
 Os dados ficam guardados no volume `eventos-data`.
 
 ### 2. Instalar as dependências
@@ -190,6 +190,5 @@ web/
 
 ## Problemas comuns
 
-- **`P1000: Authentication failed` ao rodar a migration:** outro PostgreSQL está usando a porta 5432. Use a porta 5433 no Docker e na `DATABASE_URL`, como descrito acima.
-- **Acentos quebrados em testes pelo PowerShell:** é uma limitação de codificação do PowerShell 5 ao enviar e exibir o texto. No painel web e no app os acentos funcionam normalmente.
+- **`P1000: Authentication failed` ao rodar a migration:** confira se o usuário e a senha da `DATABASE_URL` correspondem às credenciais configuradas no PostgreSQL. Verifique também se o container está ativo e se a porta 5433 está disponível.
 - **API não responde:** confira se o container `eventos-db` está ligado e se o `npm run dev -- --hostname 0.0.0.0` está rodando.
