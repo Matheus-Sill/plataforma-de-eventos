@@ -27,8 +27,8 @@ App mobile (Expo)  ──fetch──►  API (Next.js)  ──Prisma──►  P
 
 ## Pré-requisitos
 
-- Node.js 18 ou superior
-- Docker Desktop (para o PostgreSQL)
+- Node.js 20.9 ou superior
+- Docker Engine (Linux) para o PostgreSQL
 
 ## Como executar
 
@@ -38,8 +38,8 @@ App mobile (Expo)  ──fetch──►  API (Next.js)  ──Prisma──►  P
 docker run --name eventos-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=eventos -p 5433:5432 -v eventos-data:/var/lib/postgresql/data -d postgres:16
 ```
 
-O banco fica na porta **5433** do computador (a 5432 costuma estar ocupada por outro PostgreSQL instalado no Windows).
-Depois da primeira vez, basta ligar e desligar o container `eventos-db` pelo Docker Desktop, ou com `docker start eventos-db` / `docker stop eventos-db`.
+O banco fica na porta **5433** do computador (a porta 5432 pode estar ocupada por outro PostgreSQL local).
+Depois da primeira vez, basta ligar e desligar o container `eventos-db` pelo terminal, ou com `docker start eventos-db` / `docker stop eventos-db`.
 Os dados ficam guardados no volume `eventos-data`.
 
 ### 2. Instalar as dependências
@@ -83,13 +83,15 @@ Credenciais do administrador:
 ### 6. Iniciar o servidor
 
 ```bash
-npm run dev
+npm run dev -- --hostname 0.0.0.0
 ```
 
-- Painel do administrador: <http://localhost:3000/admin/login>
-- API: <http://localhost:3000/api/events>
+- Painel do administrador: `http://localhost:PORTA/admin/login`
+- API: `http://localhost:PORTA/api/events`
 
-Para o aplicativo mobile acessar a API pelo celular, o servidor precisa estar acessível na rede local (o Next.js mostra o endereço `Network` ao iniciar, algo como `http://192.168.0.32:3000`). O celular e o computador devem estar na mesma rede Wi-Fi.
+O Next.js utiliza a porta 3000 por padrão. Se ela estiver ocupada, escolherá outra porta disponível, como 3001 ou 3002. Utilize sempre a porta exibida no terminal.
+
+Para o aplicativo mobile acessar a API pelo celular, configure `mobile/src/config.ts` com o IP local do computador e a porta utilizada pelo Next.js, por exemplo: `http://192.168.1.100:3001`. Descubra o IP no Linux com `hostname -I`. O celular e o computador devem estar na mesma rede Wi-Fi.
 
 ## Modelo de dados (Prisma)
 
@@ -190,4 +192,4 @@ web/
 
 - **`P1000: Authentication failed` ao rodar a migration:** outro PostgreSQL está usando a porta 5432. Use a porta 5433 no Docker e na `DATABASE_URL`, como descrito acima.
 - **Acentos quebrados em testes pelo PowerShell:** é uma limitação de codificação do PowerShell 5 ao enviar e exibir o texto. No painel web e no app os acentos funcionam normalmente.
-- **API não responde:** confira se o container `eventos-db` está ligado e se o `npm run dev` está rodando.
+- **API não responde:** confira se o container `eventos-db` está ligado e se o `npm run dev -- --hostname 0.0.0.0` está rodando.

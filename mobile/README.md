@@ -28,7 +28,7 @@ O app consome a API do projeto `../web` (Next.js). Os eventos são cadastrados p
 
 ## Pré-requisitos
 
-- Node.js 18 ou superior
+- Node.js 20.9 ou superior
 - O projeto `web` rodando (API e banco de dados), conforme o README dele
 - Celular com o app **Expo Go**, ou um emulador Android/iOS
 - Celular e computador na **mesma rede Wi-Fi**
@@ -46,12 +46,12 @@ npm install
 Edite `src/config.ts` e coloque o IP do computador onde o projeto `web` está rodando:
 
 ```typescript
-export const API_URL = "http://192.168.0.32:3000";
+export const API_URL = "http://192.168.1.100:3001";
 ```
 
-Não use `localhost`: no celular, `localhost` aponta para o próprio aparelho. O IP da rede aparece no terminal do `npm run dev` do projeto `web` (linha `Network`) e também no comando `ipconfig`.
+Não use `localhost`: no celular, `localhost` aponta para o próprio aparelho. No Linux, descubra o IP do computador com `hostname -I`. Utilize o IP local e a porta exibida pelo Next.js ao iniciar o servidor Web. Por exemplo, se o IP for `192.168.1.100` e a porta for `3001`, configure `http://192.168.1.100:3001`.
 
-Para conferir se o celular enxerga a API, abra `http://SEU_IP:3000/api/events` no navegador do celular. Se não abrir, o Firewall do Windows pode estar bloqueando a porta 3000.
+Para conferir se o celular acessa a API, abra `http://SEU_IP:PORTA/api/events` no navegador do celular. Substitua `SEU_IP` e `PORTA` pelos valores reais. O celular e o computador devem estar na mesma rede Wi-Fi. Se não abrir, verifique se o servidor está iniciado com `--hostname 0.0.0.0` e se o firewall do Linux permite conexões nessa porta.
 
 ### 3. Iniciar o aplicativo
 
@@ -68,8 +68,8 @@ Nas versões recentes do Expo Go, em **iPhone físico** o Expo CLI e o Expo Go p
 - No Expo Go: toque no avatar (canto superior direito) e entre com a conta.
 - No computador: `npx expo login`. Se a conta foi criada com o Google (sem senha), crie um token em <https://expo.dev/settings/access-tokens> e defina no terminal onde o Expo vai rodar:
 
-```powershell
-$env:EXPO_TOKEN="seu-token"
+```bash
+export EXPO_TOKEN="seu-token"
 npx expo start
 ```
 
@@ -83,7 +83,7 @@ Qualquer usuário comum pode ser criado pela tela de cadastro do app. Exemplo de
 |---|---|
 | `teste@email.com` | `123456` |
 
-Os eventos são criados no painel web (`http://localhost:3000/admin/login`) com o administrador (`admin@email.com` / `admin123`).
+Os eventos são criados no painel web (`http://localhost:PORTA/admin/login`) com o administrador (`admin@email.com` / `admin123`).
 
 ## Estrutura do projeto
 
