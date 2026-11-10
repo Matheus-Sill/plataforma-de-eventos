@@ -1,2 +1,2 @@
-// Endereço da API (Next.js) na rede local. Troque pelo IP do seu PC.
-export const API_URL = "http://192.168.0.32:3000";
+// Endereço da API Next.js na rede local.
+export const API_URL = "http://172.20.10.3:3001";
